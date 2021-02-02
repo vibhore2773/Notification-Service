@@ -1,0 +1,3 @@
+# Notification Service Git Repository
+
+This is the repository for the Notification Service Project
