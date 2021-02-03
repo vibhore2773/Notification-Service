@@ -1,4 +1,4 @@
-package com.meesho.NotificationService;
+package com.meesho.NotificationService.services;
 
 import com.meesho.NotificationService.model.Sms_requests;
 

@@ -1,7 +1,8 @@
 package com.meesho.NotificationService;
-
 import com.meesho.NotificationService.model.Message;
 import com.meesho.NotificationService.model.Sms_requests;
+import com.meesho.NotificationService.repository.BlackListRepository;
+import com.meesho.NotificationService.repository.SmsRepository;
 import com.meesho.NotificationService.response.DataClass;
 import com.meesho.NotificationService.response.ErrorClass;
 import com.meesho.NotificationService.response.ResponseSet;
@@ -20,7 +21,8 @@ public class PrimaryController {
     SmsRepository repo;
     @Autowired
     KafkaController kafkaController;
-
+    @Autowired
+    BlackListRepository blackListRepository;
     @PostMapping("v1/sms/send")
     public ResponseEntity<ResponseSet> send(@RequestBody Message message){
         try{
@@ -28,6 +30,7 @@ public class PrimaryController {
             sms.setPhone_number(message.getPhone_number());
             sms.setMessage(message.getMessage());
             sms.setStatus("OK");
+            //blackListRepository.save(String.valueOf(sms.getId()));
             repo.save(sms);
             kafkaController.sendToKafka(String.valueOf(sms.getId()));
             return new ResponseEntity<>(new ResponseSet(new DataClass()), HttpStatus.OK);

@@ -3,10 +3,10 @@ package com.meesho.NotificationService.model;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Data
 @Component
-public class Message {
-    private String phone_number;
-    private String message;
-    Message(){}
+public class Blacklist implements Serializable {
+    private String id;
 }
