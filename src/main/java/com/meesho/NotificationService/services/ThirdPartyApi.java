@@ -1,9 +1,9 @@
 package com.meesho.NotificationService.services;
 
-import com.meesho.NotificationService.model.Sms_requests;
+import com.meesho.NotificationService.model.SmsRequests;
 
 public class ThirdPartyApi {
-    public void bhejo(Sms_requests sms) {
+    public void bhejo(SmsRequests sms) {
         System.out.println("Bhej Dia");
     }
 }

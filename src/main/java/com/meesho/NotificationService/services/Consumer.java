@@ -2,27 +2,29 @@ package com.meesho.NotificationService.services;
 
 import com.meesho.NotificationService.repository.BlackListRepository;
 import com.meesho.NotificationService.repository.SmsRepository;
-import com.meesho.NotificationService.model.Sms_requests;
+import com.meesho.NotificationService.model.SmsRequests;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.io.IOException;
-
 
 @Service
+@EnableConfigurationProperties
 public class Consumer {
     ThirdPartyApi api;
     @Autowired
     SmsRepository repo;
     @Autowired
     BlackListRepository blackListRepository;
-    @KafkaListener(topics = "notification.send_sms", groupId = "group_id")
+
+
+
+    @KafkaListener(topics = "notification.send_sms", groupId = "group_id",autoStartup = "${kafka.listener.consumer.enabled}")
     public void consume(String id) throws Exception {
-        Sms_requests sms = repo.findById(Integer.parseInt(id)).orElse(null);
-        blackListRepository.save(id);
-        if(!blackListRepository.exists(id)){
+        SmsRequests sms = repo.findById(Integer.parseInt(id)).orElse(null);
+        blackListRepository.save(sms.getPhone_number());
+        if(!blackListRepository.exists(sms.getPhone_number())){
             sms.setFailure_comments("Not in BlackList");
             repo.save(sms);
             api.bhejo(sms);

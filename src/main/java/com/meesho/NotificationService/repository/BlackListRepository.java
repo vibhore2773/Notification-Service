@@ -6,28 +6,28 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class BlackListRepository {
 
     @Autowired
-    private RedisTemplate<String,Blacklist> redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
 
-    public void save(String id){
-        Blacklist blacklist = new Blacklist();
-        blacklist.setId(id);
-        redisTemplate.opsForSet().add("data",blacklist);
+    public void save(String number){
+        redisTemplate.opsForSet().add("data",number);
     }
-    public List<Blacklist> findAll(){
-        return (List<Blacklist>) redisTemplate.opsForSet().members("data");
+    public Set<String> findAll(){
+        return redisTemplate.opsForSet().members("data");
     }
-    public boolean exists(String id){
-        Blacklist blacklist = new Blacklist();
-        blacklist.setId(id);
-        return redisTemplate.opsForSet().isMember("data",blacklist);
+    public boolean exists(String number){
+        return redisTemplate.opsForSet().isMember("data",number);
     }
-    public long delete(Blacklist id){
-        return redisTemplate.opsForSet().remove("data",id);
+    public long delete(String number){
+        return redisTemplate.opsForSet().remove("data",number);
+    }
+    public boolean deleteAll(){
+        return redisTemplate.delete("data");
     }
 }

@@ -1,6 +1,6 @@
 package com.meesho.NotificationService.repository;
 
-import com.meesho.NotificationService.model.Sms_requests;
+import com.meesho.NotificationService.model.SmsRequests;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SmsRepository extends JpaRepository<Sms_requests,Integer> {
+public interface SmsRepository extends JpaRepository<SmsRequests,Integer> {
 
     @Modifying
     @Query(value = "update sms_requests set failure_comments= :comment where id= :id",nativeQuery = true)

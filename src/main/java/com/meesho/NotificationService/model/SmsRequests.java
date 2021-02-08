@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "sms_requests")
-public class Sms_requests {
+public class SmsRequests {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

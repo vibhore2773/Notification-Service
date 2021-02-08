@@ -3,11 +3,12 @@ package com.meesho.NotificationService.model;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 
 @Data
 @Component
-public class Blacklist implements Serializable {
+public class PhoneNumber {
 
-    private String number;
+    private ArrayList<String> phone_numbers;
+    PhoneNumber(){}
 }
