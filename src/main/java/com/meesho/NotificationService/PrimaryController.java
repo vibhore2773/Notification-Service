@@ -1,9 +1,7 @@
 package com.meesho.NotificationService;
-import com.meesho.NotificationService.model.Blacklist;
-import com.meesho.NotificationService.model.Message;
-import com.meesho.NotificationService.model.PhoneNumber;
-import com.meesho.NotificationService.model.SmsRequests;
+import com.meesho.NotificationService.model.*;
 import com.meesho.NotificationService.repository.BlackListRepository;
+import com.meesho.NotificationService.repository.SearchRepository;
 import com.meesho.NotificationService.repository.SmsRepository;
 import com.meesho.NotificationService.response.DataClass;
 import com.meesho.NotificationService.response.ErrorClass;
@@ -14,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.util.List;
 import java.util.Set;
 
 
@@ -25,6 +24,10 @@ public class PrimaryController {
     KafkaController kafkaController;
     @Autowired
     BlackListRepository blackListRepository;
+
+    @Autowired
+    SearchRepository searchRepository;
+
     @PostMapping("v1/sms/send")
     public ResponseEntity<ResponseSet> send(@RequestBody Message message){
         try{
@@ -62,10 +65,12 @@ public class PrimaryController {
         return String.valueOf(check);
     }
     @GetMapping("/v1/blacklist")
-    public ResponseEntity<Set<String>> getBlacklist(){
+    public ResponseEntity<Blacklist> getBlacklist(){
         Set<String> data = blackListRepository.findAll();
+        Blacklist list = new Blacklist();
+        list.setData(data);
 
-        return new ResponseEntity(data, HttpStatus.OK);
+        return new ResponseEntity(list, HttpStatus.OK);
     }
     @GetMapping("v1/deleteAll")
     public String deleteAll(){
@@ -90,6 +95,21 @@ public class PrimaryController {
             errorClass.setMessage("request_id Not Found");
             return new ResponseEntity(new ResponseSet(errorClass), HttpStatus.NOT_FOUND);
         }
+    }
+    @PostMapping("v1/findsms/")
+    public List<SearchData> findMessage(@RequestBody String text){
+        List<SearchData> data = searchRepository.findByMessage(text);
+        return data;
+    }
+
+    @PostMapping("AddToElasticsearch")
+    public ResponseEntity addToElasticsearcg(@RequestBody SearchData data){
+        searchRepository.save(data);
+        SearchData check = searchRepository.findById(data.getId()).orElse(null);
+        if(check!=null){
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        else return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
 }

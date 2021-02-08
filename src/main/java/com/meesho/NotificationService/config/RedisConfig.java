@@ -1,4 +1,4 @@
-package com.meesho.NotificationService;
+package com.meesho.NotificationService.config;
 
 import com.meesho.NotificationService.model.Blacklist;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;

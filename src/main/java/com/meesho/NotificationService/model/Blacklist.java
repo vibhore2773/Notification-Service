@@ -4,10 +4,11 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Data
 @Component
-public class Blacklist implements Serializable {
+public class Blacklist {
 
-    private String number;
+    private Set<String> data;
 }
