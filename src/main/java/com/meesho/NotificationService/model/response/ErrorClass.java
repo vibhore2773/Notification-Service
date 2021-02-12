@@ -1,4 +1,4 @@
-package com.meesho.NotificationService.response;
+package com.meesho.NotificationService.model.response;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,5 @@
 package com.meesho.NotificationService.config;
 
-import com.meesho.NotificationService.model.Blacklist;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

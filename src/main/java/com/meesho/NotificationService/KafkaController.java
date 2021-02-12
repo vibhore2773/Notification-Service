@@ -15,6 +15,7 @@ public class KafkaController {
     }
 
     public void sendToKafka(String id){
+
         this.producer.sendMessage(id);
     }
 }

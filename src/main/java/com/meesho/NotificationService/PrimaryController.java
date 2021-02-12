@@ -1,19 +1,21 @@
 package com.meesho.NotificationService;
 import com.meesho.NotificationService.model.*;
+import com.meesho.NotificationService.model.apiSmsModel.ApiSmsModel;
+import com.meesho.NotificationService.model.elasticsearch.SearchData;
 import com.meesho.NotificationService.repository.BlackListRepository;
 import com.meesho.NotificationService.repository.SearchRepository;
 import com.meesho.NotificationService.repository.SmsRepository;
-import com.meesho.NotificationService.response.DataClass;
-import com.meesho.NotificationService.response.ErrorClass;
-import com.meesho.NotificationService.response.ResponseSet;
+import com.meesho.NotificationService.model.response.DataClass;
+import com.meesho.NotificationService.model.response.ErrorClass;
+import com.meesho.NotificationService.model.response.ResponseSet;
+import com.meesho.NotificationService.services.ImiConnectClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.List;
-import java.util.Set;
 
 
 @RestController
@@ -28,6 +30,8 @@ public class PrimaryController {
     @Autowired
     SearchRepository searchRepository;
 
+    @Autowired
+    ImiConnectClient apiClient;
     @PostMapping("v1/sms/send")
     public ResponseEntity<ResponseSet> send(@RequestBody Message message){
         try{
@@ -37,57 +41,26 @@ public class PrimaryController {
             sms.setStatus("OK");
             repo.save(sms);
             kafkaController.sendToKafka(String.valueOf(sms.getId()));
-            DataClass dataClass = new DataClass();
-            dataClass.setRequest_id(String.valueOf(sms.getId()));
-            dataClass.setComments("Successfully Sent");
-
+            DataClass dataClass = DataClass.builder().request_id(String.valueOf(sms.getId())).comments("Successfully Sent").build();
             return new ResponseEntity<>(new ResponseSet(dataClass), HttpStatus.OK);
         }catch (Exception E){
             return new ResponseEntity<>(new ResponseSet(new ErrorClass()), HttpStatus.NOT_FOUND);
         }
     }
-    @PostMapping("/v1/blacklist")
-    public ResponseEntity<ResponseSet> addToBlacklist(@RequestBody PhoneNumber phoneNumber){
-        try{
-            for(String number : phoneNumber.getPhone_numbers()){
-                blackListRepository.save(number);
-            }
-            DataClass dataClass = new DataClass();
-            dataClass.setMessage("Successfully Blacklisted");
-            return new ResponseEntity(new ResponseSet(dataClass),HttpStatus.OK);
-        }catch (Exception E){
-            return new ResponseEntity(new ResponseSet(new DataClass()),HttpStatus.NOT_FOUND);
-        }
-    }
-    @GetMapping("/exists/{number}")
-    public String exists(@PathVariable("number") String number){
-        boolean check = blackListRepository.exists(number);
-        return String.valueOf(check);
-    }
-    @GetMapping("/v1/blacklist")
-    public ResponseEntity<Blacklist> getBlacklist(){
-        Set<String> data = blackListRepository.findAll();
-        Blacklist list = new Blacklist();
-        list.setData(data);
 
-        return new ResponseEntity(list, HttpStatus.OK);
+    @GetMapping("{id}")
+    public ApiSmsModel temp(@PathVariable int id){
+        SmsRequests sms = repo.findById(id).orElse(null);
+        return new ApiSmsModel(sms);
     }
-    @GetMapping("v1/deleteAll")
-    public String deleteAll(){
-        return String.valueOf(blackListRepository.deleteAll());
 
-    }
-    @DeleteMapping("v1/blacklist/delete/")
-    public String delete(@RequestBody String phoneNumber){
-        blackListRepository.delete(phoneNumber);
-        return "Success";
-    }
     @GetMapping("/v1/sms/{request_id}")
     public ResponseEntity<ResponseSet> getDetails(@PathVariable("request_id") String id) {
         SmsRequests sms = repo.findById(Integer.parseInt(id)).orElse(null);
         if (sms != null) {
-            DataClass dataClass = new DataClass();
-            dataClass.setDetails(sms);
+            DataClass dataClass = DataClass.builder().request_id(String.valueOf(sms.getId())).message(sms.getMessage()).phone_number(sms.getPhone_number())
+                                    .comments(sms.getFailure_comments()).failure_code(sms.getFailure_code()).created_at(sms.getCreated_at()).updated_at(sms.getUpdated_at())
+                                    .build();
             return new ResponseEntity(new ResponseSet(dataClass), HttpStatus.OK);
         } else {
             ErrorClass errorClass = new ErrorClass();
@@ -96,20 +69,15 @@ public class PrimaryController {
             return new ResponseEntity(new ResponseSet(errorClass), HttpStatus.NOT_FOUND);
         }
     }
-    @PostMapping("v1/findsms/")
-    public List<SearchData> findMessage(@RequestBody String text){
-        List<SearchData> data = searchRepository.findByMessage(text);
+    @GetMapping("v1/findsms/{page_number}/{size}")
+    public Page<SearchData> findMessage(@RequestBody Message message, @PathVariable("page_number") int page_number, @PathVariable("size") int size){
+
+        Pageable pageable = PageRequest.of(page_number,size);
+        System.out.println(searchRepository + "Search");
+
+        Page<SearchData> data = searchRepository.findByMessageContains(message.getMessage(), pageable);
         return data;
     }
 
-    @PostMapping("AddToElasticsearch")
-    public ResponseEntity addToElasticsearcg(@RequestBody SearchData data){
-        searchRepository.save(data);
-        SearchData check = searchRepository.findById(data.getId()).orElse(null);
-        if(check!=null){
-            return new ResponseEntity(HttpStatus.OK);
-        }
-        else return new ResponseEntity(HttpStatus.NOT_FOUND);
-    }
 
 }

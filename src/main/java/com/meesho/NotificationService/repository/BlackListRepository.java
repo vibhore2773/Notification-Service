@@ -1,11 +1,9 @@
 package com.meesho.NotificationService.repository;
 
-import com.meesho.NotificationService.model.Blacklist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Set;
 
 @Component

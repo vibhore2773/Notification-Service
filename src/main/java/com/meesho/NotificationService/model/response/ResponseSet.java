@@ -1,10 +1,7 @@
-package com.meesho.NotificationService.response;
+package com.meesho.NotificationService.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 @Component
 @JsonInclude(JsonInclude.Include.NON_NULL)

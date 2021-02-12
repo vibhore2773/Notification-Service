@@ -1,6 +1,7 @@
 package com.meesho.NotificationService.config;
 
 import org.elasticsearch.client.RestHighLevelClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
@@ -12,10 +13,11 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "com.meesho.NotificationService.repository")
 public class ElasticsearchConfig {
-
+    @Value("${elasticsearch.port}")
+    private String hostAndPort;
     @Bean
     public RestHighLevelClient client(){
-        ClientConfiguration configuration = ClientConfiguration.builder().connectedTo("${elasticsearch.port}").build();
+        ClientConfiguration configuration = ClientConfiguration.builder().connectedTo(hostAndPort).build();
 
         return RestClients.create(configuration).rest();
     }

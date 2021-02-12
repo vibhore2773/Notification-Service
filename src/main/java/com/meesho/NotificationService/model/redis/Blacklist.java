@@ -1,4 +1,4 @@
-package com.meesho.NotificationService.model;
+package com.meesho.NotificationService.model.redis;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;
