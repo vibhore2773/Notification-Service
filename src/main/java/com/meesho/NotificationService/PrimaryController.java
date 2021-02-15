@@ -73,9 +73,7 @@ public class PrimaryController {
     public Page<SearchData> findMessage(@RequestBody Message message, @PathVariable("page_number") int page_number, @PathVariable("size") int size){
 
         Pageable pageable = PageRequest.of(page_number,size);
-        System.out.println(searchRepository + "Search");
-
-        Page<SearchData> data = searchRepository.findByMessageContains(message.getMessage(), pageable);
+        Page<SearchData> data = searchRepository.findByMessageUsingCustomQuery(message.getMessage(), pageable);
         return data;
     }
 

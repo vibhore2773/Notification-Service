@@ -44,11 +44,9 @@ public class RedisController {
         boolean check = redisService.exists(number);
         return String.valueOf(check);
     }
-
     @GetMapping("v1/deleteAll")
     public String deleteAll(){
         return String.valueOf(redisService.deleteAll());
-
     }
     @DeleteMapping("v1/blacklist/delete/")
     public String delete(@RequestBody String phoneNumber){
