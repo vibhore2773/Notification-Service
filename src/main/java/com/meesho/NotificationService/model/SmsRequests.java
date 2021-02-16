@@ -9,6 +9,7 @@ import java.util.Date;
 
 @Data
 @Entity
+@Builder
 @Table(name = "sms_requests")
 public class SmsRequests {
     @Id

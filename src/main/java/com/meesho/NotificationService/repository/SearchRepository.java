@@ -13,4 +13,6 @@ public interface SearchRepository extends ElasticsearchRepository<SearchData,Str
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"message\": \"?0\"}}]}}")
     Page<SearchData> findByMessageUsingCustomQuery(String message, Pageable pageable);
+    
+
 }

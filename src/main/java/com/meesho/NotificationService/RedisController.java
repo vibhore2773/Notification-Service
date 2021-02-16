@@ -1,6 +1,5 @@
 package com.meesho.NotificationService;
 
-
 import com.meesho.NotificationService.model.PhoneNumber;
 import com.meesho.NotificationService.model.redis.Blacklist;
 import com.meesho.NotificationService.model.response.DataClass;
