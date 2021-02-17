@@ -1,9 +1,6 @@
 package com.meesho.NotificationService;
+
 import com.meesho.NotificationService.model.*;
-import com.meesho.NotificationService.model.apiSmsModel.ApiSmsModel;
-import com.meesho.NotificationService.model.elasticsearch.SearchData;
-import com.meesho.NotificationService.repository.BlackListRepository;
-import com.meesho.NotificationService.repository.SmsRepository;
 import com.meesho.NotificationService.model.response.DataClass;
 import com.meesho.NotificationService.model.response.ErrorClass;
 import com.meesho.NotificationService.model.response.ResponseSet;
@@ -11,7 +8,6 @@ import com.meesho.NotificationService.services.ElasticsearchService;
 import com.meesho.NotificationService.services.ImiConnectClient;
 import com.meesho.NotificationService.services.SmsDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +24,10 @@ public class PrimaryController {
     @Autowired
     KafkaController kafkaController;
     @Autowired
-    BlackListRepository blackListRepository;
-
-    @Autowired
     ElasticsearchService elasticsearchService;
-
     @Autowired
     ImiConnectClient apiClient;
+
     @PostMapping("v1/sms/send")
     public ResponseEntity<ResponseSet> send(@RequestBody Message message){
         try{
@@ -48,11 +41,11 @@ public class PrimaryController {
         }
     }
 
-    @GetMapping("{id}")
-    public ApiSmsModel temp(@PathVariable int id){
-        SmsRequests sms = smsDatabaseService.findById(id);
-        return new ApiSmsModel(sms);
-    }
+//    @GetMapping("{id}")
+//    public ApiSmsModel temp(@PathVariable int id){
+//        SmsRequests sms = smsDatabaseService.findById(id);
+//        return new ApiSmsModel(sms);
+//    }
 
     @GetMapping("/v1/sms/{request_id}")
     public ResponseEntity<ResponseSet> getDetails(@PathVariable("request_id") String id) {
@@ -74,10 +67,14 @@ public class PrimaryController {
         return elasticsearchService.findByMessage(message.getMessage(), page_number,size);
     }
 
-    @GetMapping("rangeES")
-    public List<Map> dummy() throws IOException {
-        SmsRequests sms1 = smsDatabaseService.findById(1);
-        SmsRequests sms2 = smsDatabaseService.findById(36);
-        return elasticsearchService.findByRange(sms1.getCreated_at(),sms2.getCreated_at(),0,4);
+//    @GetMapping("rangeES")
+//    public List<Map> dummy() throws IOException {
+//        SmsRequests sms1 = smsDatabaseService.findById(1);
+//        SmsRequests sms2 = smsDatabaseService.findById(36);
+//        return elasticsearchService.findByRange(sms1.getCreated_at(),sms2.getCreated_at(),0,4);
+//    }
+    @GetMapping("/findsmsBetweenDates/")
+    public List<Map> findMessageByRange(@RequestBody DateRange range) throws IOException {
+        return elasticsearchService.findByRange(range.getFrom(),range.getTo(),0,4);
     }
 }

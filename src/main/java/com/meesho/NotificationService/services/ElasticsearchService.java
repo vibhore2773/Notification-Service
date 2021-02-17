@@ -8,7 +8,9 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -38,11 +40,19 @@ public class ElasticsearchService {
         }
     }
     public List<Map> findByMessage(String message, int page_number, int size) throws IOException {
-        QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("message",message));
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder().query(queryBuilder).from(page_number*size).size(size);
+
+        String regexp = ".*" +message + ".*";
+
+        QueryBuilder matchQuery = QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("message",message).fuzziness(Fuzziness.AUTO));
+        //QueryBuilder queryBuilder = QueryBuilders.disMaxQuery().add(QueryBuilders.matchQuery("message",message).fuzziness(Fuzziness.AUTO))
+                                                                ;
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder().query(matchQuery).from(page_number*size).size(size);
+
         SearchRequest searchRequest = new SearchRequest();
         searchRequest.source(sourceBuilder);
+
         SearchResponse response = client.search(searchRequest,RequestOptions.DEFAULT);
+
         List<Map> data = new ArrayList<>();
         for(SearchHit hit : response.getHits().getHits()){
             data.add(hit.getSourceAsMap());
