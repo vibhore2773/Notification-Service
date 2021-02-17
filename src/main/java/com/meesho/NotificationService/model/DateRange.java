@@ -1,5 +1,6 @@
 package com.meesho.NotificationService.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,8 @@ public class DateRange {
 
     private Date from;
     private Date to;
+
+    @JsonProperty("page_number")
+    private int pageNumber;
+    private int size;
 }

@@ -16,8 +16,8 @@ public class SmsRequests {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
-    private String phone_number;
+    @Column( name = "phone_number", nullable = false)
+    private String phoneNumber;
 
     @Column(nullable = false)
     private String message;
@@ -25,13 +25,16 @@ public class SmsRequests {
     @Column(nullable = false)
     private String status;
 
-    private String failure_code;
+    @Column(name = "failure_code")
+    private String failureCode;
 
-    private String failure_comments;
+    @Column(name = "failure_comments")
+    private String failureComments;
 
-    @Column(nullable = false)
-    private Date created_at=new Date();
+    @Column(name = "created_at",nullable = false)
+    private Date createdAt =new Date();
 
-    private Date updated_at;
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
 }

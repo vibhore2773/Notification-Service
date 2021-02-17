@@ -23,7 +23,7 @@ public class ApiSmsModel {
     public ApiSmsModel(SmsRequests sms){
         this.deliveryChannel = "sms";
         this.channels = new Channels(new Sms(sms.getMessage()));
-        Destination d = Destination.builder().correlationid(String.valueOf(sms.getId())).msisdn(Arrays.asList(sms.getPhone_number())).build();
+        Destination d = Destination.builder().correlationid(String.valueOf(sms.getId())).msisdn(Arrays.asList(sms.getPhoneNumber())).build();
         this.destination = Arrays.asList(d);
     }
 }
