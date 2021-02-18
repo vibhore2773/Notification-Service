@@ -2,6 +2,8 @@
 package com.meesho.NotificationService.model.elasticsearch;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,13 +21,19 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document( indexName = "sms_details")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchData implements Serializable {
     @Id
     private String id;
-    @Field(type = FieldType.Text)
-    private String phone_number;
+
+    @JsonProperty("phone_number")
+    @Field(name = "phone_number",type = FieldType.Text)
+    private String phoneNumber;
+
     @Field(type = FieldType.Text)
     private String message;
-    @Field(type = FieldType.Date)
-    private Date created_at;
+
+    @JsonProperty("created_at")
+    @Field(name = "created_at", type = FieldType.Date)
+    private Date createdAt;
 }
